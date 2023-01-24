@@ -108,10 +108,10 @@
     <module name="WhitespaceAfter">
       <property name="tokens"
                value="COMMA, SEMI, TYPECAST, LITERAL_IF, LITERAL_ELSE, LITERAL_RETURN,
-                    LITERAL_WHILE, LITERAL_DO, LITERAL_FOR, LITERAL_FINALLY, DO_WHILE, ELLIPSIS,
+                    LITERAL_WHILE, LITERAL_DO, LITERAL_FOR, DO_WHILE, ELLIPSIS,
                     LITERAL_SWITCH, LITERAL_TRY, LITERAL_CATCH, LAMBDA,
                     LITERAL_CASE"/>
-                    <!-- LITERAL_SYNCHRONIZED, LITERAL_YIELD,  -->
+                    <!-- LITERAL_SYNCHRONIZED, LITERAL_YIELD, LITERAL_FINALLY,  -->
     </module>
     <module name="WhitespaceAround">
       <property name="allowEmptyConstructors" value="true"/>
