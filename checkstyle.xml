@@ -105,14 +105,16 @@
       <property name="query" value="//RCURLY[parent::SLIST[count(./*)=1]
                                      or preceding-sibling::*[last()][self::LCURLY]]"/>
     </module>
+    <!--
     <module name="WhitespaceAfter">
       <property name="tokens"
                value="COMMA, SEMI, TYPECAST, LITERAL_IF, LITERAL_ELSE,
                     LITERAL_WHILE, LITERAL_DO, LITERAL_FOR, DO_WHILE, ELLIPSIS,
                     LITERAL_SWITCH, LAMBDA,
                     LITERAL_CASE"/>
-                    <!-- LITERAL_SYNCHRONIZED, LITERAL_YIELD, LITERAL_FINALLY, LITERAL_TRY, LITERAL_CATCH, LITERAL_RETURN,  -->
+                     LITERAL_SYNCHRONIZED, LITERAL_YIELD, LITERAL_FINALLY, LITERAL_TRY, LITERAL_CATCH, LITERAL_RETURN,  
     </module>
+    -->
     <module name="WhitespaceAround">
       <property name="allowEmptyConstructors" value="true"/>
       <property name="allowEmptyLambdas" value="true"/>
