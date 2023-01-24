@@ -13,7 +13,7 @@ node {
         sh "chmod +x mvnw"
         sh "./mvnw -ntp clean -P-webapp"
     }
-    stage('nohttp') {
+    stage('checkstyle') {
         sh "./mvnw -ntp checkstyle:check"
     }
 
