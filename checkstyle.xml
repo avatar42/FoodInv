@@ -392,7 +392,6 @@
        ... ignored content ...
        // CHECKSTYLE:ON
     -->
-    <module name="SuppressWithPlainTextCommentFilter"/>
   </module>
 </module>
 
