@@ -1,30 +1,63 @@
-pipeline {
-    agent any
+#!/usr/bin/env groovy
 
-    tools {
-        // Install the Maven version configured as "M3" and add it to the path.
-        maven "M3"
+node {
+    stage('checkout') {
+        checkout scm
     }
 
-    stages {
-        stage('Build') {
-            steps {
-                // Get some code from a GitHub repository
-                echo 'git https://github.com/avatar42/FoodInv.git'
-                
-                // Run Maven on a Unix agent.
-                sh "./mvnw -Dmaven.test.failure.ignore=true -Pprod,war clean verify"
+    stage('check java') {
+        sh "java -version"
+    }
 
-             }
+    stage('clean') {
+        sh "chmod +x mvnw"
+        sh "./mvnw -ntp clean -P-webapp"
+    }
+    stage('nohttp') {
+        sh "./mvnw -ntp checkstyle:check"
+    }
 
-            post {
-                // If Maven was able to run the tests, even if some of the test
-                // failed, record the test results and archive the jar file.
-                success {
-                    junit '**/target/surefire-reports/TEST-*.xml'
-                    archiveArtifacts 'target/*.war'
-                }
-            }
+    stage('install tools') {
+        sh "./mvnw -ntp com.github.eirslett:frontend-maven-plugin:install-node-and-npm@install-node-and-npm"
+    }
+
+    stage('npm install') {
+        sh "./mvnw -ntp com.github.eirslett:frontend-maven-plugin:npm"
+    }
+    stage('backend tests') {
+        try {
+            sh "./mvnw -ntp verify -P-webapp"
+        } catch(err) {
+            throw err
+        } finally {
+            junit '**/target/surefire-reports/TEST-*.xml,**/target/failsafe-reports/TEST-*.xml'
         }
+    }
+
+    stage('frontend tests') {
+        try {
+            sh "./mvnw -ntp com.github.eirslett:frontend-maven-plugin:npm -Dfrontend.npm.arguments='run test-ci'"
+        } catch(err) {
+            throw err
+        } finally {
+            junit '**/target/test-results/TESTS-results-jest.xml'
+        }
+    }
+
+    stage('packaging') {
+        sh "./mvnw -ntp verify -P-webapp deploy -Pprod -DskipTests"
+        archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+    }
+    stage('quality analysis') {
+        withSonarQubeEnv('asusl') {
+            sh "./mvnw -ntp initialize sonar:sonar"
+        }
+    }
+
+    def dockerImage
+    stage('publish docker') {
+        // A pre-requisite to this step is to setup authentication to the docker registry
+        // https://github.com/GoogleContainerTools/jib/tree/master/jib-maven-plugin#authentication-methods
+        sh "./mvnw -ntp -Pprod verify jib:build"
     }
 }
